@@ -1,21 +1,29 @@
-# Usa imagem oficial do Python
-FROM python:3.10-slim
-
-# Evita criação de arquivos .pyc
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+# Imagem base leve e atualizada
+FROM python:3.13-slim
 
 # Define diretório de trabalho
 WORKDIR /app
 
-# Copia dependências e instala
-COPY requirements.txt .
-RUN pip install --upgrade pip && pip install -r requirements.txt
+# Variáveis de ambiente / Evita criação de arquivos .pyc
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-# Copia o restante do projeto
+# Instala dependências do sistema
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Instala dependências Python
+COPY requirements.txt .
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+
+# Copia o projeto
 COPY . .
 
-# Comando para iniciar com Gunicorn
-CMD ["gunicorn", "core.wsgi:application", "--bind", "0.0.0.0:8000"]
+# Coleta arquivos estáticos (opcional para produção)
+RUN python manage.py collectstatic --noinput
 
-ENV DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
+# Define o comando padrão para produção
+CMD ["gunicorn", "core.wsgi:application", "--bind", "0.0.0.0:8000"]
