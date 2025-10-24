@@ -4,7 +4,7 @@ FROM python:3.13-slim
 # Define diretório de trabalho
 WORKDIR /app
 
-# Variáveis de ambiente / Evita criação de arquivos .pyc
+# Variáveis de ambiente padrão
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
@@ -22,8 +22,4 @@ RUN pip install -r requirements.txt
 # Copia o projeto
 COPY . .
 
-# Coleta arquivos estáticos (opcional para produção)
-RUN python manage.py collectstatic --noinput
-
-# Define o comando padrão para produção
-CMD ["gunicorn", "core.wsgi:application", "--bind", "0.0.0.0:8000"]
+# O comando será definido no docker-compose (runserver ou gunicorn)
