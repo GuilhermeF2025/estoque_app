@@ -1,6 +1,5 @@
 from pathlib import Path
-import os
-from decouple import config
+from decouple import config  # type: ignore
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
