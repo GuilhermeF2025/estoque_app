@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Cadastrar Produto</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" style="background-color: #2196F3; color: white; padding: 10px 15px; border: none; border-radius: 5px;">Salvar</button>
+</form>
+<a href="{% url 'home' %}" style="display: inline-block; margin-top: 20px;">← Voltar</a>
+{% endblock %}
